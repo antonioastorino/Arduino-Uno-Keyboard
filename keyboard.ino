@@ -2,6 +2,7 @@
 #define COLS 1
 #define UP 0
 #define DOWN 1
+#define MAX_KEY_COUNT 6
 
 uint8_t buf[8]       = {0}; /* Keyboard report buffer */
 bool state_buf[2][1] = {UP};
@@ -18,37 +19,41 @@ void setup() {
     delay(200);
 }
 
+void erase_buffer() {
+    for (int i = 0; i < 8; i ++) {
+        buf[i] = 0;
+    }
+}
+
 void loop() {
-    buf[2] = 0;
-    for (int row = 0; row < ROWS; row++) {
+    erase_buffer();
+
+    uint8_t key_counter = 0;
+    for (int row = 0; row < ROWS && key_counter < MAX_KEY_COUNT; row++) {
         PORTC = 1 << row; // Turn on one output at a time in sequence
-        for (int col = 0; col < COLS; col++) {
+        for (int col = 0; col < COLS && key_counter < MAX_KEY_COUNT; col++) {
             bool reading = digitalRead(col + 2);
             delay(100);
-            if (state_buf[row][col] == DOWN) {
-                // Serial.write("Key: ");
-                // Serial.write(65 + row);
-                // Serial.write(" DOWN ");
-                buf[2] = 4 + row;
-            } else {
-                // Serial.write("Key: ");
-                // Serial.write(65 + row);
-                // Serial.write(" UP ");
-            }
-
             if (reading) {
                 state_buf[row][col] = DOWN;
             } else {
                 state_buf[row][col] = UP;
             }
+            if (state_buf[row][col] == DOWN) {
+                // Serial.write("Key: ");
+                // Serial.write(65 + row);
+                // Serial.write(" DOWN ");
+                buf[2 + key_counter] = 4 + row;
+                key_counter++;
+            } else {
+                // Serial.write("Key: ");
+                // Serial.write(65 + row);
+                // Serial.write(" UP ");
+            }
         }
     }
     Serial.write(buf, 8);
+    // Serial.write("- Key counter");
+    // Serial.write(48 + key_counter);
     // Serial.write("\n");
-}
-
-void releaseKey() {
-    buf[0] = 0;
-    buf[2] = 0;
-    Serial.write(buf, 8); // Release key
 }

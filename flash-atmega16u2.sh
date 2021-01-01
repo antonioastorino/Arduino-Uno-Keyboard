@@ -11,7 +11,7 @@ else
 	exit
 fi
 
-sudo dfu-programmer atmega16u2 erase --force
+dfu-programmer atmega16u2 erase --force
 dfu-programmer atmega16u2 flash $FIRMWARE
 dfu-programmer atmega16u2 reset
 

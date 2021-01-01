@@ -83,7 +83,7 @@
 uint8_t buf[8]       = {0}; /* Keyboard report buffer */
 bool state_buf[ROWS][COLS] = {UP};
 // NOTE: Rows and cols are swapped here to make this array more readable.
-uint8_t button_map[COLS][ROWS] = {{KEY_M, KEY_A}, {KEY_R, KEY_K}};
+uint8_t button_map[COLS][ROWS] = {{KEY_Q, KEY_W}, {KEY_A, KEY_S}};
 
 void setup() {
     Serial.begin(9600);
@@ -108,6 +108,7 @@ void loop() {
     uint8_t key_counter = 0;
     for (int row = 0; row < ROWS && key_counter < MAX_KEY_COUNT; row++) {
         PORTC = 1 << row; // Turn on one output at a time in sequence
+        delay(5);
         for (int col = 0; col < COLS && key_counter < MAX_KEY_COUNT; col++) {
             bool reading = digitalRead(col + 2);
             if (reading) {
@@ -124,6 +125,5 @@ void loop() {
             }
         }
     }
-    delay(30);
     Serial.write(buf, 8);
 }

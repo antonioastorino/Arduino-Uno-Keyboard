@@ -1,5 +1,5 @@
 #define ROWS 2
-#define COLS 2
+#define COLS 7
 #define UP 0
 #define DOWN 1
 #define MAX_KEY_COUNT 6
@@ -81,8 +81,8 @@
 
 uint8_t buf[8]             = {0}; /* Keyboard report buffer */
 bool state_buf[ROWS][COLS] = {UP};
-// NOTE: Rows and cols are swapped here to make this array more readable.
-uint8_t button_map[COLS][ROWS] = {{KEY_Q, KEY_W}, {KEY_A, KEY_S}};
+uint8_t button_map[ROWS][COLS] = {{KEY_TAB, KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T, KEY_Y},
+                                  {KEY_CAPSLOCK, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G, KEY_H}};
 
 void setup() {
     Serial.begin(9600);
@@ -113,8 +113,7 @@ void update_buffer() {
                 state_buf[row][col] = UP;
             }
             if (state_buf[row][col] == DOWN) {
-                // NOTE: Cols and rows are swapped here on purpose
-                uint8_t key_code     = button_map[col][row];
+                uint8_t key_code     = button_map[row][col];
                 buf[2 + key_counter] = key_code;
                 // Serial.write(61 + key_code);
                 if (key_counter < MAX_KEY_COUNT) {
